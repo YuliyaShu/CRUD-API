@@ -1,7 +1,7 @@
 {
-  "name": "crud-api",
+  "name": "CRUD API",
   "version": "1.0.0",
-  "description": "Task 3 on Node js course RSSchool Q4 2022",
+  "description": "Node js Q4 2022 project",
   "main": "index.js",
   "scripts": {
     "start": "ts-node src/index.ts",
@@ -18,8 +18,13 @@
   },
   "homepage": "https://github.com/YuliyaShu/CRUD-API#readme",
   "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^5.47.0",
+    "@typescript-eslint/parser": "^5.47.0",
     "eslint": "^8.30.0",
     "eslint-config-airbnb": "^19.0.4",
+    "eslint-config-airbnb-typescript": "^17.0.0",
+    "node-typescript-compiler": "^3.0.0",
+    "ts-loader": "^9.4.2",
     "ts-node": "^10.9.1",
     "typescript": "^4.9.4"
   }
