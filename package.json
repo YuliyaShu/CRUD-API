@@ -1,10 +1,11 @@
 {
-  "name": "CRUD API",
+  "name": "crud_api",
   "version": "1.0.0",
   "description": "Node js Q4 2022 project",
   "main": "index.js",
   "scripts": {
-    "start": "ts-node src/index.ts",
+    "start:dev": "ts-node src/index.ts",
+    "start:prod": "tsc & node dist/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -20,6 +21,7 @@
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^5.47.0",
     "@typescript-eslint/parser": "^5.47.0",
+    "dotenv": "^16.0.3",
     "eslint": "^8.30.0",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-config-airbnb-typescript": "^17.0.0",
