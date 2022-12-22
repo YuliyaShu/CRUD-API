@@ -5,7 +5,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "start:dev": "SET STATUS=development && ts-node-esm src/index.ts  ",
+    "start:dev": "SET STATUS=development && nodemon --legacy-watch --ignore 'src/*.spec.ts' --exec ts-node-esm src/index.ts  ",
     "start:prod": "SET STATUS=production && tsc & node dist/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -27,6 +27,7 @@
     "eslint-config-airbnb": "^19.0.4",
     "eslint-config-airbnb-typescript": "^17.0.0",
     "node-typescript-compiler": "^3.0.0",
+    "nodemon": "^2.0.20",
     "ts-loader": "^9.4.2",
     "ts-node": "^10.9.1",
     "typescript": "^4.9.4"
