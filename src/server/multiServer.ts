@@ -13,15 +13,17 @@ const PORT = (process.env.STATUS?.trim() === 'production')
 const numCPUs = cpus().length;
 
 export const startMultiServer = () => {
+    cluster.SCHED_RR;
     if (cluster.isPrimary) {
-        console.log(`Primary ${process.pid} is running`);
+        
+        console.log(`Primary ${process.pid} is running. Please, wait...`);
       
         for (let i = 0; i < numCPUs; i++) {
           cluster.fork();
         }
       
         cluster.on('exit', (worker) => {
-          console.log(`worker ${worker.process.pid} died`);
+          console.log(`Worker ${worker.process.pid} died`);
         });
       } else {
         createServer(requestListener).listen(PORT, () => console.log(`Worker ${process.pid} started and is listening on ${PORT} port in ${process.env.STATUS} mode.`))
