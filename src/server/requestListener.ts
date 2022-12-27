@@ -45,6 +45,7 @@ export const requestListener = async (req: IncomingMessage, res: ServerResponse)
                     default:
                 }
             } else {
+                let body = '';
                 if (!validate(userId)) {
                     sendResponse(res, StatusCodes.BadRequest, StatusMessages.BadRequest);
                     return;
@@ -82,6 +83,27 @@ export const requestListener = async (req: IncomingMessage, res: ServerResponse)
                         console.log(allUsers);
                         break;
                     case 'PUT':
+                        req.on('data', (chunk) => {
+                            body += chunk;
+                                }).on('end', () => {
+                                    const userDataFromRequest: RequestBody = JSON.parse(body);
+                                    if (isUserDataValid(userDataFromRequest)) {
+                                        allUsers.forEach(user => {
+                                            if (user.id === userId) {
+                                                user.age = userDataFromRequest.age;
+                                                user.hobbies = userDataFromRequest.hobbies;
+                                                user.username = userDataFromRequest.username;
+                                            }
+                                        })
+                                        const user: User = {...userDataFromRequest, ...{id: userId}};
+                                        const userBuffer = createBuffer(user);
+                                        sendResponse(res, StatusCodes.OK, StatusMessages.OK, userBuffer);
+                                        console.log('🚀 ~ req.on ~ user', user);
+                                    } else {
+                                        sendResponse(res, StatusCodes.BadRequest, StatusMessages.BadRequest);
+                                    }
+                                });
+                            break;
                     case 'DELETE':
                     default:
                 
