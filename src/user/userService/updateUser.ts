@@ -1,7 +1,7 @@
 import { StatusCodes, StatusMessages } from "../../server/consts.js";
 import { RequestBody } from "../../server/RequestBody.js";
 import { createBuffer } from "../../utils/createBuffer.js";
-import { isUserDataValid } from "../../utils/isUserDataValid.js";
+import { isRequestBodyValid } from "../../utils/isRequestBodyValid.js";
 import { sendResponse } from "../../utils/sendResponse.js";
 import { User } from "../User.js";
 import { ServerResponse, IncomingMessage } from 'node:http';
@@ -13,7 +13,7 @@ export const updateUser = (req: IncomingMessage, res: ServerResponse, allUsers: 
             }).on('end', () => {
                 
                 const userDataFromRequest: RequestBody = JSON.parse(body || JSON.stringify(''));
-                if (isUserDataValid(userDataFromRequest)) {
+                if (isRequestBodyValid(userDataFromRequest)) {
                     allUsers.forEach(user => {
                         if (user.id === userId) {
                             user.age = userDataFromRequest.age;

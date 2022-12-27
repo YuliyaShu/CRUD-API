@@ -9,7 +9,7 @@ import { getAllUsers } from '../user/userService/getAllUsers.js';
 import { getUser } from '../user/userService/getUser.js';
 import { updateUser } from '../user/userService/updateUser.js';
 import { deleteUser } from '../user/userService/deleteUser.js';
-import { userDataValidation } from '../user/userService/userDataValidation.js';
+import { isUserDataValid } from '../user/userService/isUserDataValid.js';
 
 export const requestListener = async (req: IncomingMessage, res: ServerResponse) => {
     try {
@@ -31,12 +31,11 @@ export const requestListener = async (req: IncomingMessage, res: ServerResponse)
                         break;
                 }
             } else {
-                if (userDataValidation(res, userId, allUsers)) {
+                if (isUserDataValid(res, userId, allUsers)) {
                     let existUser = { id: '', username: '', age: 0, hobbies: [] } as User;
-                    allUsers.forEach(user => {
-                        if (user.id === userId) {
-                            existUser = user;
-                        }
+                    allUsers.some(user => {
+                        existUser = user;
+                        return user.id === userId;
                     })
                     switch (req.method) {
                         case 'GET':

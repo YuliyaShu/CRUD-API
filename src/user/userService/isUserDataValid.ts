@@ -4,8 +4,7 @@ import { StatusCodes, StatusMessages } from "../../server/consts.js";
 import { sendResponse } from "../../utils/sendResponse.js";
 import { User } from "../User.js";
 
-export const userDataValidation = (res: ServerResponse<IncomingMessage>, userId: string, allUsers: User[]) => {
-    console.log('im here')
+export const isUserDataValid = (res: ServerResponse<IncomingMessage>, userId: string, allUsers: User[]) => {
     if (!validate(userId)) {
         sendResponse(res, StatusCodes.BAD_REQUEST, StatusMessages.BAD_REQUEST);
         return false;

@@ -1,6 +1,6 @@
 import { RequestBody } from "../server/RequestBody"
 
-export const isUserDataValid = (userData: RequestBody) => {
+export const isRequestBodyValid = (userData: RequestBody) => {
     if (!userData) return false;
     return 'age' in userData 
         && typeof userData.age === 'number'

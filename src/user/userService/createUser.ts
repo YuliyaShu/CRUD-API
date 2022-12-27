@@ -2,7 +2,7 @@ import { IncomingMessage, ServerResponse } from "http";
 import { StatusCodes, StatusMessages } from "../../server/consts.js";
 import { RequestBody } from "../../server/RequestBody.js";
 import { createBuffer } from "../../utils/createBuffer.js";
-import { isUserDataValid } from "../../utils/isUserDataValid.js";
+import { isRequestBodyValid } from "../../utils/isRequestBodyValid.js";
 import { sendResponse } from "../../utils/sendResponse.js";
 import { User } from "../User.js";
 import { v4 as uuidv4 } from 'uuid';
@@ -12,9 +12,9 @@ export const createUser = (req: IncomingMessage, res: ServerResponse<IncomingMes
         let body = '';
         req.on('data', (chunk) => {
             body += chunk;
-        }).on('end', () => {
-            const userData: RequestBody = JSON.parse(body || JSON.stringify(body));
-            if (isUserDataValid(userData)) {
+        }).on('end', async () => {
+            const userData: RequestBody = await JSON.parse(body || JSON.stringify(body));
+            if (isRequestBodyValid(userData)) {
                 const id = uuidv4();
                 const user: User = {...userData, ...{id: id}};
                 const userBuffer = createBuffer(user);
