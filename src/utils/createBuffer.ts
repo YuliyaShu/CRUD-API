@@ -1,7 +1,6 @@
 import { User } from "../user/User";
 
-export const createBuffer = (data: User[]) => {
+export const createBuffer = (data: User[] | User) => {
     const json = JSON.stringify(data);
-    const allUsersBuffer = Buffer.from(json);
-    return allUsersBuffer;
+    return Buffer.from(json);
 }

@@ -5,4 +5,5 @@ export const sendResponse = (res: ServerResponse, code: number, message: string,
     res.statusMessage = message;
     res.write(body || message);
     res.end();
-} 
+    console.log(message);
+}
