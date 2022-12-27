@@ -35,7 +35,7 @@ export const requestListener = async (req: IncomingMessage, res: ServerResponse)
                                     allUsersBuffer = Buffer.concat([allUsersBuffer, userBuffer]);
                                     allUsers.push(user);
                                     console.log('🚀 ~ req.on ~ allUsers', allUsers);
-                                    sendResponse(res, StatusCodes.OK, StatusMessages.OK, userBuffer);
+                                    sendResponse(res, StatusCodes.Created, StatusMessages.Created, userBuffer);
                                     console.log('🚀 ~ req.on ~ user', user);
                                 } else {
                                     sendResponse(res, StatusCodes.BadRequest, StatusMessages.BadRequest);
@@ -77,6 +77,7 @@ export const requestListener = async (req: IncomingMessage, res: ServerResponse)
                     hobbies: existUser.hobbies
                 } as User;
                 const userWithoutIdBuffer = createBuffer(userWithoutId);
+                let indexForDelete = 0;
                 switch (req.method) {
                     case 'GET':
                         sendResponse(res, StatusCodes.OK, StatusMessages.OK, userWithoutIdBuffer);
@@ -105,8 +106,17 @@ export const requestListener = async (req: IncomingMessage, res: ServerResponse)
                                 });
                             break;
                     case 'DELETE':
+                        allUsers.forEach((user, index) => {
+                            if (user.id === userId) {
+                                indexForDelete = index;
+                            }
+                        });
+                        allUsers.slice(indexForDelete, indexForDelete + 1);
+                        sendResponse(res, StatusCodes.NoContent, StatusMessages.NoContent);
+                        break;
                     default:
-                
+                        sendResponse(res, StatusCodes.BadRequest, StatusMessages.BadRequest);
+                        break;
                     }
             }
         } else {
