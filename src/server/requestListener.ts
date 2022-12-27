@@ -2,131 +2,67 @@ import { IncomingMessage, ServerResponse } from 'node:http';
 import { StatusCodes, StatusMessages } from './consts.js';
 import { sendResponse } from '../utils/sendResponse.js';
 import { state } from '../user/state.js';
-import { createBuffer } from '../utils/createBuffer.js';
-import { RequestBody } from './RequestBody.js';
 import { User } from '../user/User.js';
-import { isUserDataValid } from '../utils/isUserDataValid.js';
-import { v4 as uuidv4, validate } from 'uuid';
+import { createUser } from '../user/userService/createUser.js';
+import { getUserId } from '../utils/getUserId.js';
+import { getAllUsers } from '../user/userService/getAllUsers.js';
+import { getUser } from '../user/userService/getUser.js';
+import { updateUser } from '../user/userService/updateUser.js';
+import { deleteUser } from '../user/userService/deleteUser.js';
+import { userDataValidation } from '../user/userService/userDataValidation.js';
 
 export const requestListener = async (req: IncomingMessage, res: ServerResponse) => {
     try {
         res.setHeader('Content-Type', 'application/json');
         if (req.url?.startsWith('/api/users')) {
             const allUsers = state;
-            let allUsersBuffer = createBuffer(allUsers)
-            const lastPartOfRequest = req.url.split('/').slice(-1).join('');
-            const userId = (lastPartOfRequest === 'users') ? '' : lastPartOfRequest;
+            const userId = getUserId(req);
 
             if (!userId) {
-                let body = '';
                 switch (req.method) {
                     case 'GET':
-                        sendResponse(res, StatusCodes.OK, StatusMessages.OK, allUsersBuffer);
+                        getAllUsers(res, allUsers);
                         break;
                     case 'POST':
-                        req.on('data', (chunk) => {
-                        body += chunk;
-                            }).on('end', () => {
-                                const userData: RequestBody = JSON.parse(body);
-                                if (isUserDataValid(userData)) {
-                                    const id = uuidv4();
-                                    const user: User = {...userData, ...{id: id}};
-                                    const userBuffer = createBuffer(user);
-                                    allUsersBuffer = Buffer.concat([allUsersBuffer, userBuffer]);
-                                    allUsers.push(user);
-                                    console.log('🚀 ~ req.on ~ allUsers', allUsers);
-                                    sendResponse(res, StatusCodes.Created, StatusMessages.Created, userBuffer);
-                                    console.log('🚀 ~ req.on ~ user', user);
-                                } else {
-                                    sendResponse(res, StatusCodes.BadRequest, StatusMessages.BadRequest);
-                                }
-                            });
+                        createUser(req, res, allUsers);
                         break;
                     default:
+                        sendResponse(res, StatusCodes.BAD_REQUEST, StatusMessages.BAD_REQUEST);
+                        break;
                 }
             } else {
-                let body = '';
-                if (!validate(userId)) {
-                    sendResponse(res, StatusCodes.BadRequest, StatusMessages.BadRequest);
-                    return;
-                } 
-                if (!allUsers.length) {
-                    sendResponse(res, StatusCodes.NotFound, StatusMessages.NotFound);
-                    return;
-                }
-                let isUserExist = false;
-                let existUser = {
-                    id: '',
-                    username: '',
-                    age: 0,
-                    hobbies: []
-                } as User;
-                allUsers.forEach(user => {
-                    if (user.id === userId) {
-                        isUserExist = true;
-                        existUser = user
-                    }
-                })
-                if (!isUserExist) {
-                    sendResponse(res, StatusCodes.NotFound, StatusMessages.NotFound);
-                    return;
-                }
-                const userWithoutId = {
-                    username: existUser.username,
-                    age: existUser.age,
-                    hobbies: existUser.hobbies
-                } as User;
-                const userWithoutIdBuffer = createBuffer(userWithoutId);
-                let indexForDelete = 0;
-                switch (req.method) {
-                    case 'GET':
-                        sendResponse(res, StatusCodes.OK, StatusMessages.OK, userWithoutIdBuffer);
-                        console.log(allUsers);
-                        break;
-                    case 'PUT':
-                        req.on('data', (chunk) => {
-                            body += chunk;
-                                }).on('end', () => {
-                                    const userDataFromRequest: RequestBody = JSON.parse(body);
-                                    if (isUserDataValid(userDataFromRequest)) {
-                                        allUsers.forEach(user => {
-                                            if (user.id === userId) {
-                                                user.age = userDataFromRequest.age;
-                                                user.hobbies = userDataFromRequest.hobbies;
-                                                user.username = userDataFromRequest.username;
-                                            }
-                                        })
-                                        const user: User = {...userDataFromRequest, ...{id: userId}};
-                                        const userBuffer = createBuffer(user);
-                                        sendResponse(res, StatusCodes.OK, StatusMessages.OK, userBuffer);
-                                        console.log('🚀 ~ req.on ~ user', user);
-                                    } else {
-                                        sendResponse(res, StatusCodes.BadRequest, StatusMessages.BadRequest);
-                                    }
-                                });
+                if (userDataValidation(res, userId, allUsers)) {
+                    let existUser = { id: '', username: '', age: 0, hobbies: [] } as User;
+                    allUsers.forEach(user => {
+                        if (user.id === userId) {
+                            existUser = user;
+                        }
+                    })
+                    switch (req.method) {
+                        case 'GET':
+                            getUser(res, existUser);
                             break;
-                    case 'DELETE':
-                        allUsers.forEach((user, index) => {
-                            if (user.id === userId) {
-                                indexForDelete = index;
-                            }
-                        });
-                        allUsers.slice(indexForDelete, indexForDelete + 1);
-                        sendResponse(res, StatusCodes.NoContent, StatusMessages.NoContent);
-                        break;
-                    default:
-                        sendResponse(res, StatusCodes.BadRequest, StatusMessages.BadRequest);
-                        break;
-                    }
+                        case 'PUT':
+                            updateUser(req, res, allUsers,userId);
+                            break;
+                        case 'DELETE':
+                            deleteUser(res, allUsers, userId);
+                            break;
+                        default:
+                            sendResponse(res, StatusCodes.BAD_REQUEST, StatusMessages.BAD_REQUEST);
+                            break;
+                        }
+                }
             }
         } else {
-            sendResponse(res, StatusCodes.NotFound, StatusMessages.NotFound);
+            sendResponse(res, StatusCodes.NOT_FOUND, StatusMessages.NOT_FOUND);
+            return;
         }
-        
-    } catch (error: unknown) {
+    } catch (error) {
         if (error instanceof Error) {
             console.log('Something went wrong. Try one more time');
             console.error(error.message);
         }
+        sendResponse(res, StatusCodes.INTERNAL_SERVER, StatusMessages.INTERNAL_SERVER);
     }
 }
