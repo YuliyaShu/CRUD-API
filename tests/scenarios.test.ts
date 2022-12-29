@@ -1,5 +1,5 @@
 import supertest from 'supertest';
-import { StatusCodes } from '../src/server/consts.js';
+import { StatusCodes, StatusMessages } from '../src/server/consts.js';
 import { User } from '../src/user/User.js';
 import { validate } from 'uuid';
 
@@ -64,6 +64,7 @@ describe('Scenario 1, chain of requests with one user', () => {
         const response = await supertest(baseUrl)
                                 .get(apiUrl + '/' + fakeUserWithId.id);
         expect(response.statusCode).toEqual(StatusCodes.NOT_FOUND);
+        expect(response.body.message).toEqual(StatusMessages.NOT_FOUND);
     });
                                 
 });
@@ -109,16 +110,16 @@ describe('Scenario 2, handle errors 400', () => {
             const response = await supertest(baseUrl)
                                     .get(apiUrl + '/' + notUuidUserID);
             expect(response.statusCode).toEqual(StatusCodes.BAD_REQUEST);
+            expect(response.body.message).toEqual(StatusMessages.BAD_REQUEST);
         }
     });
     
     it.each(incorrectRequestBody)('should get an answer with status code 400 and corresponding message if request body does not contain required fields, POST request', async (body) => {
-        
-            const response = await supertest(baseUrl)
-                                        .post(apiUrl)
-                                        .send(body);
-            expect(response.statusCode).toEqual(StatusCodes.BAD_REQUEST);
-
+        const response = await supertest(baseUrl)
+                                    .post(apiUrl)
+                                    .send(body);
+        expect(response.statusCode).toEqual(StatusCodes.BAD_REQUEST);
+        expect(response.body.message).toEqual(StatusMessages.BAD_REQUEST);
     });
 
     it('should get an answer with status code 400 and corresponding message if userId is invalid (not uuid), PUT request by id', async () => {
@@ -127,6 +128,7 @@ describe('Scenario 2, handle errors 400', () => {
                                     .put(apiUrl + '/' + notUuidUserID)
                                     .send(fakeUser);
             expect(response.statusCode).toEqual(StatusCodes.BAD_REQUEST);
+            expect(response.body.message).toEqual(StatusMessages.BAD_REQUEST);
         }
     });
 
@@ -135,15 +137,9 @@ describe('Scenario 2, handle errors 400', () => {
             const response = await supertest(baseUrl)
                                     .delete(apiUrl + '/' + notUuidUserID);
             expect(response.statusCode).toEqual(StatusCodes.BAD_REQUEST);
+            expect(response.body.message).toEqual(StatusMessages.BAD_REQUEST);
         }
     });
-
-    it('should get an answer with status code 400 and corresponding message if request to non-existing endpoints, GET request', async () => {
-        const response = await supertest(baseUrl)
-                                .get(incorrectApiUrl);
-        expect(response.statusCode).toEqual(StatusCodes.NOT_FOUND);
-    })
-               
 });
 
 
@@ -154,20 +150,29 @@ describe('Scenario 3, handle errors 404', () => {
         const response = await supertest(baseUrl)
                                 .get(apiUrl + '/' + fakeUserId);
         expect(response.statusCode).toEqual(StatusCodes.NOT_FOUND);
+        expect(response.body.message).toEqual(StatusMessages.NOT_FOUND);
     });
 
     it('should get an answer with status code 404 and corresponding message if record with id === userId doesnt exist, PUT request by id', async () => {
-            const response = await supertest(baseUrl)
-                                    .put(apiUrl + '/' + fakeUserId)
-                                    .send(fakeUser);
-            expect(response.statusCode).toEqual(StatusCodes.NOT_FOUND);
+        const response = await supertest(baseUrl)
+                                .put(apiUrl + '/' + fakeUserId)
+                                .send(fakeUser);
+        expect(response.statusCode).toEqual(StatusCodes.NOT_FOUND);
+        expect(response.body.message).toEqual(StatusMessages.NOT_FOUND);
     });
     
     it('should get an answer with status code 404 and corresponding message if record with id === userId doesnt exist, DELETE request by id', async () => {
         const response = await supertest(baseUrl)
                                 .delete(apiUrl + '/' + fakeUserId);
         expect(response.statusCode).toEqual(StatusCodes.NOT_FOUND);
+        expect(response.body.message).toEqual(StatusMessages.NOT_FOUND);
     });
 
+    it('should get an answer with status code 404 and corresponding message if request to non-existing endpoints, GET request', async () => {
+        const response = await supertest(baseUrl)
+                                .get(incorrectApiUrl);
+        expect(response.statusCode).toEqual(StatusCodes.NOT_FOUND);
+        expect(response.body.message).toEqual(StatusMessages.NOT_FOUND);
+    })
                                 
 });
