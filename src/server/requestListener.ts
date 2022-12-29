@@ -58,10 +58,8 @@ export const requestListener = async (req: IncomingMessage, res: ServerResponse)
             return;
         }
     } catch (error) {
-        if (error instanceof Error) {
             console.log('Something went wrong. Try one more time');
-            console.error(error.message);
-        }
+            console.error(error);
         sendResponse(res, StatusCodes.INTERNAL_SERVER, StatusMessages.INTERNAL_SERVER);
     }
 }

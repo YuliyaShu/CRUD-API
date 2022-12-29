@@ -7,26 +7,24 @@ import cluster from 'node:cluster';
 
 dotenv.config();
 
-let PORT = Number(process.env.DEV_PORT) || 4000;
+const PORT = Number(process.env.DEV_PORT) || 4000;
 const numCPUs = cpus().length;
 
 export const startMultiServer = () => {
     cluster.SCHED_RR;
     if (cluster.isPrimary) {
-        
-        console.log(`Primary ${process.pid} is running on ${PORT} port. Please, wait...`);
+        createServer(requestListener).listen(PORT, () => console.log(`Primary ${process.pid} is running on ${PORT} port. Please, wait...`));
       
         for (let i = 0; i < numCPUs; i++) {
-          PORT = PORT + i + 1;
-          cluster.fork({PORT: PORT});
-          
+          const workerPORT = PORT + i +1;
+          cluster.fork({PORT: workerPORT});
+          process.env.PORT = workerPORT.toString();
         }
       
         cluster.on('exit', (worker) => {
           console.log(`Worker ${worker.process.pid} died`);
         });
       } else {
-        
-        createServer(requestListener).listen(PORT, () => console.log(`Worker ${process.pid} started and is listening on ${PORT} port in ${process.env.STATUS} mode.`))
+        createServer(requestListener).listen(Number(process.env.PORT), () => console.log(`Worker ${process.pid} started and is listening on ${process.env.PORT} port in ${process.env.STATUS} mode.`))
     }
 } 
