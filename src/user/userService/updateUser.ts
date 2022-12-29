@@ -14,7 +14,7 @@ export const updateUser = (req: IncomingMessage, res: ServerResponse, allUsers: 
                 }).on('end', () => {
                     
                     const userDataFromRequest: RequestBody = JSON.parse(body || JSON.stringify(''));
-                    if (isRequestBodyValid(userDataFromRequest)) {
+                    if (isRequestBodyValid(res, userDataFromRequest)) {
                         allUsers.forEach(user => {
                             if (user.id === userId) {
                                 user.age = userDataFromRequest.age;
@@ -23,7 +23,7 @@ export const updateUser = (req: IncomingMessage, res: ServerResponse, allUsers: 
                             }
                         })
                         const user: User = {...userDataFromRequest, ...{id: userId}};
-                        const userBuffer = createBuffer(user);
+                        const userBuffer = createBuffer(user, res);
                         sendResponse(res, StatusCodes.OK, StatusMessages.OK, userBuffer);
                     } else {
                         sendResponse(res, StatusCodes.BAD_REQUEST, StatusMessages.BAD_REQUEST);
@@ -32,5 +32,6 @@ export const updateUser = (req: IncomingMessage, res: ServerResponse, allUsers: 
     } catch (error) {
         console.log('Something went wrong. Try one more time');
         console.error(error);
+        sendResponse(res, StatusCodes.INTERNAL_SERVER, StatusMessages.INTERNAL_SERVER);
     }
 }

@@ -14,10 +14,10 @@ export const createUser = (req: IncomingMessage, res: ServerResponse<IncomingMes
             body += chunk;
         }).on('end', async () => {
             const userData: RequestBody = await JSON.parse(body || JSON.stringify(body));
-            if (isRequestBodyValid(userData)) {
+            if (isRequestBodyValid(res, userData)) {
                 const id = uuidv4();
                 const user: User = {...userData, ...{id: id}};
-                const userBuffer = createBuffer(user);
+                const userBuffer = createBuffer(user, res);
                 allUsers.push(user);
                 sendResponse(res, StatusCodes.CREATED, StatusMessages.CREATED, userBuffer);
             } else {
@@ -25,10 +25,8 @@ export const createUser = (req: IncomingMessage, res: ServerResponse<IncomingMes
             }
         });
     } catch (error) {
-        if (error instanceof Error) {
-            console.log('Something went wrong. Try one more time');
-            console.error(error.message);
-        }
+        console.log('Something went wrong. Try one more time');
+        console.error(error);
         sendResponse(res, StatusCodes.INTERNAL_SERVER, StatusMessages.INTERNAL_SERVER);
     }
 } 

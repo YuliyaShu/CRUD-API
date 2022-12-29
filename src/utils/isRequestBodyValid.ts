@@ -1,6 +1,9 @@
-import { RequestBody } from "../server/RequestBody"
+import { RequestBody } from "../server/RequestBody.js"
+import { IncomingMessage, ServerResponse } from "http";
+import { sendResponse } from "./sendResponse.js";
+import { StatusCodes, StatusMessages } from "../server/consts.js";
 
-export const isRequestBodyValid = (userData: RequestBody) => {
+export const isRequestBodyValid = (res: ServerResponse<IncomingMessage>, userData: RequestBody) => {
     try {
         if (!userData) return false;
         return 'age' in userData 
@@ -12,5 +15,6 @@ export const isRequestBodyValid = (userData: RequestBody) => {
     } catch (error) {
         console.log('Something went wrong. Try one more time');
         console.error(error);
+        sendResponse(res, StatusCodes.INTERNAL_SERVER, StatusMessages.INTERNAL_SERVER);
     }
 }

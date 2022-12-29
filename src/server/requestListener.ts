@@ -16,7 +16,7 @@ export const requestListener = async (req: IncomingMessage, res: ServerResponse)
         res.setHeader('Content-Type', 'application/json');
         if (req.url?.startsWith('/api/users')) {
             const allUsers = state;
-            const userId = getUserId(req);
+            const userId = getUserId(req, res);
 
             if (!userId) {
                 switch (req.method) {

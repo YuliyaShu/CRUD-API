@@ -16,5 +16,6 @@ export const deleteUser = (res: ServerResponse, allUsers: User[], userId: string
     } catch (error) {
         console.log('Something went wrong. Try one more time');
         console.error(error);
+        sendResponse(res, StatusCodes.INTERNAL_SERVER, StatusMessages.INTERNAL_SERVER);
     }
 }

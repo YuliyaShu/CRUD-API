@@ -11,10 +11,11 @@ export const getUser = (res: ServerResponse<IncomingMessage>, existUser: User) =
             age: existUser.age,
             hobbies: existUser.hobbies
         } as User;
-        const userWithoutIdBuffer = createBuffer(userWithoutId);
+        const userWithoutIdBuffer = createBuffer(userWithoutId, res);
         sendResponse(res, StatusCodes.OK, StatusMessages.OK, userWithoutIdBuffer);
     } catch (error) {
         console.log('Something went wrong. Try one more time');
         console.error(error);
+        sendResponse(res, StatusCodes.INTERNAL_SERVER, StatusMessages.INTERNAL_SERVER);
     }
 }
