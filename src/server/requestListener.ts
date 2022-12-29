@@ -42,7 +42,7 @@ export const requestListener = async (req: IncomingMessage, res: ServerResponse)
                             getUser(res, existUser);
                             break;
                         case 'PUT':
-                            updateUser(req, res, allUsers,userId);
+                            updateUser(req, res, allUsers, userId);
                             break;
                         case 'DELETE':
                             deleteUser(res, allUsers, userId);
