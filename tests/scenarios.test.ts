@@ -102,7 +102,7 @@ const incorrectRequestBody = [
 ]
 const incorrectApiUrl = '/api/incorrect/';
 
-describe('Scenario 2, handle errors', () => {
+describe('Scenario 2, handle errors 400', () => {
 
     it('should get an answer with status code 400 and corresponding message if userId is invalid (not uuid), GET request by id', async () => {
         if (!validate(notUuidUserID)) {
@@ -111,13 +111,6 @@ describe('Scenario 2, handle errors', () => {
             expect(response.statusCode).toEqual(StatusCodes.BAD_REQUEST);
         }
     });
-
-    it('should get an answer with status code 404 and corresponding message if record with id === userId doesnt exist, GET request by id', async () => {
-        const response = await supertest(baseUrl)
-                                .get(apiUrl + '/' + fakeUserId);
-        expect(response.statusCode).toEqual(StatusCodes.NOT_FOUND);
-    });
-
     
     it.each(incorrectRequestBody)('should get an answer with status code 400 and corresponding message if request body does not contain required fields, POST request', async (body) => {
         
@@ -137,13 +130,6 @@ describe('Scenario 2, handle errors', () => {
         }
     });
 
-    it('should get an answer with status code 404 and corresponding message if record with id === userId doesnt exist, PUT request by id', async () => {
-            const response = await supertest(baseUrl)
-                                    .put(apiUrl + '/' + fakeUserId)
-                                    .send(fakeUser);
-            expect(response.statusCode).toEqual(StatusCodes.NOT_FOUND);
-    });
-
     it('should get an answer with status code 400 and corresponding message if userId is invalid (not uuid), DELETE request by id', async () => {
         if (!validate(notUuidUserID)) {
             const response = await supertest(baseUrl)
@@ -152,16 +138,36 @@ describe('Scenario 2, handle errors', () => {
         }
     });
 
-    it('should get an answer with status code 404 and corresponding message if record with id === userId doesnt exist, DELETE request by id', async () => {
-        const response = await supertest(baseUrl)
-                                .delete(apiUrl + '/' + fakeUserId);
-        expect(response.statusCode).toEqual(StatusCodes.NOT_FOUND);
-    });
-
     it('should get an answer with status code 400 and corresponding message if request to non-existing endpoints, GET request', async () => {
         const response = await supertest(baseUrl)
                                 .get(incorrectApiUrl);
         expect(response.statusCode).toEqual(StatusCodes.NOT_FOUND);
     })
                
+});
+
+
+
+
+describe('Scenario 3, handle errors 404', () => {
+    it('should get an answer with status code 404 and corresponding message if record with id === userId doesnt exist, GET request by id', async () => {
+        const response = await supertest(baseUrl)
+                                .get(apiUrl + '/' + fakeUserId);
+        expect(response.statusCode).toEqual(StatusCodes.NOT_FOUND);
+    });
+
+    it('should get an answer with status code 404 and corresponding message if record with id === userId doesnt exist, PUT request by id', async () => {
+            const response = await supertest(baseUrl)
+                                    .put(apiUrl + '/' + fakeUserId)
+                                    .send(fakeUser);
+            expect(response.statusCode).toEqual(StatusCodes.NOT_FOUND);
+    });
+    
+    it('should get an answer with status code 404 and corresponding message if record with id === userId doesnt exist, DELETE request by id', async () => {
+        const response = await supertest(baseUrl)
+                                .delete(apiUrl + '/' + fakeUserId);
+        expect(response.statusCode).toEqual(StatusCodes.NOT_FOUND);
+    });
+
+                                
 });
