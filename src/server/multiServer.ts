@@ -24,7 +24,7 @@ export const startMultiServer = () => {
         cluster.on('exit', (worker) => {
           console.log(`Worker ${worker.process.pid} died`);
         });
-      } else {
+    } else {
         createServer(requestListener).listen(Number(process.env.PORT), () => console.log(`Worker ${process.pid} started and is listening on ${process.env.PORT} port in ${process.env.STATUS} mode.`))
     }
 } 

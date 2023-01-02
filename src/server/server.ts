@@ -6,7 +6,6 @@ import { requestListener } from './requestListener.js';
 dotenv.config();
 
 export const PORT = (() => {
-    console.log('🚀 ~ PORT ~ process.env.STATUS', process.env.STATUS);
     if (process.env.STATUS?.trim() === 'production') {
         return Number(process.env.PROD_PORT) || 4001;
     } else if (process.env.STATUS?.trim() === 'test') {
