@@ -5,8 +5,15 @@ import { requestListener } from './requestListener.js';
 
 dotenv.config();
 
-const PORT = (process.env.STATUS?.trim() === 'production')
-    ? Number(process.env.PROD_PORT) || 4001
-    : Number(process.env.DEV_PORT) || 4000;
+export const PORT = (() => {
+    console.log('🚀 ~ PORT ~ process.env.STATUS', process.env.STATUS);
+    if (process.env.STATUS?.trim() === 'production') {
+        return Number(process.env.PROD_PORT) || 4001;
+    } else if (process.env.STATUS?.trim() === 'test') {
+        return Number(process.env.TEST_PORT) || 4100;
+    } else {
+        return Number(process.env.DEV_PORT) || 4000;
+    }
+})
 
-export const startServer = () => createServer(requestListener).listen(PORT, () => console.log(`Server is listening on ${PORT} port in ${process.env.STATUS} mode.`))
+export const startServer = (PORT: number) => createServer(requestListener).listen(PORT, () => console.log(`Server is listening on ${PORT} port in ${process.env.STATUS} mode.`))

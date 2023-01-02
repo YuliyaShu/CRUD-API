@@ -8,7 +8,7 @@
     "start:dev": "SET STATUS=development && nodemon --legacy-watch --ignore 'src/*.spec.ts' --exec ts-node-esm src/index.ts  ",
     "start:prod": "SET STATUS=production && tsc & node dist/index.js",
     "start:multi": "SET STATUS=development && nodemon --legacy-watch --ignore 'src/*.spec.ts' --exec ts-node-esm src/indexMulti.ts  ",
-    "test": "jest",
+    "test": "SET STATUS=test && jest --detectOpenHandles",
     "test:coverage": "jest --coverage",
     "lint": "npx eslint"
   },

@@ -2,9 +2,13 @@ import supertest from 'supertest';
 import { StatusCodes, StatusMessages } from '../src/server/consts.js';
 import { User } from '../src/user/User.js';
 import { validate } from 'uuid';
+import { startServer } from '../src/server/server.js'
 
 jest.setTimeout(10000);
-const baseUrl = 'http://localhost:4000';
+
+const port = Number(process.env.TEST_PORT);
+const server = startServer(port);
+const baseUrl = server;
 const apiUrl = '/api/users/';
 
 const fakeUser = {
@@ -176,3 +180,5 @@ describe('Scenario 3, handle errors 404', () => {
     })
                                 
 });
+
+server.close();

@@ -1,3 +1,4 @@
-import { startServer } from "./server/server.js";
+import { PORT, startServer } from "./server/server.js";
 
-startServer();
+const port = PORT();
+startServer(port);

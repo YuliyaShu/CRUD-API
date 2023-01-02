@@ -9,6 +9,10 @@ import { v4 as uuidv4 } from 'uuid';
 
 export const createUser = (req: IncomingMessage, res: ServerResponse<IncomingMessage>,  allUsers: User[]) => {
     try {
+        // uncomment 3 lines and send POST request for checking 500 Internal Server Error
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        // null.param;
         let body = '';
         req.on('data', (chunk) => {
             body += chunk;

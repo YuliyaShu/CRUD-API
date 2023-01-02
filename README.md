@@ -37,29 +37,17 @@ Then go to https://www.postman.com/ and send requests:
 
 **Delete user** -> DELETE http://127.0.0.1:4000/api/users/${id}
 
+
+***FYI:*** uncomment 3 lines in src/user/userService/createUser.ts and send POST request for checking 500 Internal Server Error
+
 >
 >
+
 # 🚀 Unit tests
 
-1. Run application in development mode
-
-```
-npm run start:dev
-```
-
-2. Application should be run on http://localhost:4000. Check it.
-
-3. Run tests 
+Run tests 
 
 ```
 npm run test
 npm run test:coverage
 ```
-
-4. If you get an error, please restart the application in development mode.
-
-```
-connect ECONNREFUSED 127.0.0.1:4000
-```
-
-
