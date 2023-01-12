@@ -1,0 +1,40 @@
+{
+  "name": "crud_api",
+  "version": "1.0.0",
+  "description": "Node js Q4 2022 project",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start:dev": "SET STATUS=development && nodemon --legacy-watch --ignore 'src/*.spec.ts' --exec ts-node-esm src/index.ts  ",
+    "start:prod": "SET STATUS=production && tsc & node dist/index.js",
+    "start:multi": "SET STATUS=development && nodemon --legacy-watch --ignore 'src/*.spec.ts' --exec ts-node-esm src/indexMulti.ts  ",
+    "test": "SET STATUS=test && jest --detectOpenHandles",
+    "test:coverage": "jest --coverage",
+    "lint": "npx eslint"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/YuliyaShu/CRUD-API.git"
+  },
+  "author": "YuliyaShu",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/YuliyaShu/CRUD-API/issues"
+  },
+  "homepage": "https://github.com/YuliyaShu/CRUD-API#readme",
+  "devDependencies": {
+    "@jest/globals": "^29.3.1",
+    "@types/jest": "^29.2.4",
+    "@types/supertest": "^2.0.12",
+    "@types/uuid": "^9.0.0",
+    "dotenv": "^16.0.3",
+    "eslint": "^8.30.0",
+    "jest": "^29.3.1",
+    "nodemon": "^2.0.20",
+    "supertest": "^6.3.3",
+    "ts-jest": "^29.0.3",
+    "ts-node": "^10.9.1",
+    "typescript": "^4.9.4",
+    "uuid": "^9.0.0"
+  }
+}
